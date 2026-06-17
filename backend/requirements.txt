@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+pandas
+numpy
+scikit-learn
+catboost
+networkx
+folium
+stable-baselines3
+langchain
+langgraph
+openai
+python-dotenv
