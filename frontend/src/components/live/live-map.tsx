@@ -23,16 +23,19 @@ const HIGH_SEVERITY_THRESHOLD = 4;
 const MARKER_SIZE_LARGE = 22;
 const MARKER_SIZE_SMALL = 16;
 
-
-
 // DBSCAN-style clustering commonly marks unclustered points with -1.
 // Grouping those together produces one bounding box spanning the
 // whole map, so they're excluded from the hotspot polygons below.
 const NOISE_CLUSTER = -1;
 
+// Stable empty-array reference so a missing route from the store
+// (currently arrives as `undefined` until the store/fetch bug is
+// fixed) never throws, and so we don't create a new [] every render
+// and break memoization downstream.
+const EMPTY_ROUTE: [number, number][] = [];
+
 // Lightweight local GeoJSON types so we don't need `as any` and
 // don't need to pull in @types/geojson just for this.
-
 
 type PointFeatureCollection = {
   type: "FeatureCollection";
@@ -125,49 +128,48 @@ function formatTimestamp(ts: string) {
   return Number.isNaN(date.getTime()) ? ts : date.toLocaleString();
 }
 
-function getEventKey(
-  event: LiveEvent
-) {
-
-  return event.id;
-
-}
-
 // Route stores hold [lat, lon] pairs; GeoJSON wants [lon, lat].
-function toLineString(route: [number, number][]): LineStringFeature {
+// `route` should always be an array by the time it gets here (the
+// selectors below fall back to EMPTY_ROUTE), but the ?? [] is kept
+// as cheap insurance against any other caller passing undefined.
+function toLineString(route: [number, number][] = []): LineStringFeature {
   return {
     type: "Feature",
     geometry: {
       type: "LineString",
       coordinates: route.map(
-        ([lat, lon]) => [lon, lat]
+        ([lat, lon]): [number, number] => [lon, lat]
       ),
     },
   };
 }
 
+// A [lat, lon] pair from the store; guards against a present-but-malformed
+// tuple (e.g. [] or [lat] with no lon) in addition to null/undefined.
+function isValidPoint(point: unknown): point is [number, number] {
+  return (
+    Array.isArray(point) &&
+    point.length === 2 &&
+    Number.isFinite(point[0]) &&
+    Number.isFinite(point[1])
+  );
+}
+
 export default function LiveMap() {
-  const primaryRoute =
-  useRouteStore(s => s.primaryRoute);
+  // Fall back to EMPTY_ROUTE so `.length`/`.map` below never throw,
+  // even while the store is returning undefined (see useRouteEngine
+  // ROUTE FETCH ERROR — setRoutes isn't wired up correctly there yet).
+  const primaryRoute = useRouteStore((s) => s.primaryRoute) ?? EMPTY_ROUTE;
+  const diversionRoute = useRouteStore((s) => s.diversionRoute) ?? EMPTY_ROUTE;
+  const emergencyRoute = useRouteStore((s) => s.emergencyRoute) ?? EMPTY_ROUTE;
+  const source = useRouteStore((s) => s.source);
+  const destination = useRouteStore((s) => s.destination);
 
-const diversionRoute =
-  useRouteStore(s => s.diversionRoute);
-
-const emergencyRoute =
-  useRouteStore(s => s.emergencyRoute);
-
-const source =
-  useRouteStore(s => s.source);
-
-const destination =
-  useRouteStore(s => s.destination);
   const events = useLiveStore((s) => s.events);
 
-  const [selected, setSelected] =
-    useState<LiveEvent | null>(null);
+  const [selected, setSelected] = useState<LiveEvent | null>(null);
 
   const mapRef = useRef<MapRef>(null);
-  const hasFitBoundsRef = useRef(false);
   const [mapLoaded, setMapLoaded] = useState(false);
 
   // Drop events with missing/invalid coordinates before they ever
@@ -186,15 +188,7 @@ const destination =
   // If the selected event falls out of the live feed (expired,
   // resolved, etc.), clear it instead of leaving a stale popup open.
   useEffect(() => {
-    if (
-      selected &&
-      !events.some(
-        (e) =>
-          e.latitude === selected.latitude &&
-          e.longitude === selected.longitude &&
-          e.timestamp === selected.timestamp
-      )
-    ) {
+    if (selected && !events.some((e) => e.id === selected.id)) {
       // Avoid synchronous setState within an effect to prevent
       // cascading renders — schedule the update asynchronously.
       setTimeout(() => setSelected(null), 0);
@@ -207,33 +201,19 @@ const destination =
   // camera follows a freshly-calculated route instead of only fitting
   // once on first load.
   useEffect(() => {
-    if (!mapLoaded)
-      return;
+    if (!mapLoaded) return;
 
     const points = [
-
-      ...validEvents.map(
-        e => [Number(e.latitude), Number(e.longitude)]
-      ),
-
+      ...validEvents.map((e) => [Number(e.latitude), Number(e.longitude)]),
       ...primaryRoute,
-
       ...diversionRoute,
-
-      ...emergencyRoute
-
+      ...emergencyRoute,
     ];
 
-    if (points.length === 0)
-      return;
+    if (points.length === 0) return;
 
-    const lats = points.map(
-      p => p[0]
-    );
-
-    const lngs = points.map(
-      p => p[1]
-    );
+    const lats = points.map((p) => p[0]);
+    const lngs = points.map((p) => p[1]);
 
     const minLat = Math.min(...lats);
     const maxLat = Math.max(...lats);
@@ -251,13 +231,7 @@ const destination =
         maxZoom: 14,
       }
     );
-  }, [
-    mapLoaded,
-    validEvents,
-    primaryRoute,
-    diversionRoute,
-    emergencyRoute
-  ]);
+  }, [mapLoaded, validEvents, primaryRoute, diversionRoute, emergencyRoute]);
 
   const heatmapData = useMemo<PointFeatureCollection>(
     () => ({
@@ -270,10 +244,7 @@ const destination =
         },
         geometry: {
           type: "Point",
-          coordinates: [
-            Number(e.longitude),
-            Number(e.latitude),
-          ],
+          coordinates: [Number(e.longitude), Number(e.latitude)],
         },
       })),
     }),
@@ -320,24 +291,12 @@ const destination =
       });
   }, [validEvents]);
 
-  const primaryGeoJson = useMemo(
-    () => toLineString(primaryRoute),
-    [primaryRoute]
-  );
-
-  const diversionGeoJson = useMemo(
-    () => toLineString(diversionRoute),
-    [diversionRoute]
-  );
-
-  const emergencyGeoJson = useMemo(
-    () => toLineString(emergencyRoute),
-    [emergencyRoute]
-  );
+  const primaryGeoJson = useMemo(() => toLineString(primaryRoute), [primaryRoute]);
+  const diversionGeoJson = useMemo(() => toLineString(diversionRoute), [diversionRoute]);
+  const emergencyGeoJson = useMemo(() => toLineString(emergencyRoute), [emergencyRoute]);
 
   return (
     <div className="h-full w-full rounded-xl overflow-hidden">
-
       <Map
         ref={mapRef}
         onLoad={() => setMapLoaded(true)}
@@ -354,21 +313,13 @@ const destination =
           bearing: -15,
         }}
         mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
-        style={{
-          width: "100%",
-          height: "100%",
-        }}
+        style={{ width: "100%", height: "100%" }}
       >
-
         <NavigationControl position="top-right" />
 
         {/* HEATMAP */}
 
-        <Source
-          id="heat"
-          type="geojson"
-          data={heatmapData as PointFeatureCollection}
-        >
+        <Source id="heat" type="geojson" data={heatmapData as PointFeatureCollection}>
           <Layer
             id="heat-layer"
             type="heatmap"
@@ -397,13 +348,15 @@ const destination =
             key={poly.cluster}
             id={`cluster-${poly.cluster}`}
             type="geojson"
-            data={{
-              type: "Feature",
-              geometry: {
-                type: "Polygon",
-                coordinates: [poly.polygon],
-              },
-            } as PolygonFeature}
+            data={
+              {
+                type: "Feature",
+                geometry: {
+                  type: "Polygon",
+                  coordinates: [poly.polygon],
+                },
+              } as PolygonFeature
+            }
           >
             <Layer
               id={`fill-${poly.cluster}`}
@@ -428,144 +381,91 @@ const destination =
         {/* PRIMARY ROUTE */}
 
         {primaryRoute.length > 0 && (
-
-          <Source
-            id="primary-route"
-            type="geojson"
-            data={primaryGeoJson as LineStringFeature}
-          >
-
+          <Source id="primary-route" type="geojson" data={primaryGeoJson as LineStringFeature}>
             <Layer
               id="primary-line"
               type="line"
-              paint={{
-                "line-color": "#22c55e",
-                "line-width": 5
-              }}
+              paint={{ "line-color": "#22c55e", "line-width": 5 }}
             />
-
           </Source>
-
         )}
 
         {/* DIVERSION ROUTE */}
 
         {diversionRoute.length > 0 && (
-
-          <Source
-            id="diversion-route"
-            type="geojson"
-            data={diversionGeoJson as LineStringFeature}
-          >
-
+          <Source id="diversion-route" type="geojson" data={diversionGeoJson as LineStringFeature}>
             <Layer
               id="diversion-line"
               type="line"
               paint={{
                 "line-color": "#3b82f6",
                 "line-width": 4,
-                "line-dasharray": [2, 2]
+                "line-dasharray": [2, 2],
               }}
             />
-
           </Source>
-
         )}
 
         {/* EMERGENCY ROUTE */}
 
         {emergencyRoute.length > 0 && (
-
-          <Source
-            id="emergency-route"
-            type="geojson"
-            data={emergencyGeoJson as LineStringFeature}
-          >
-
+          <Source id="emergency-route" type="geojson" data={emergencyGeoJson as LineStringFeature}>
             <Layer
               id="emergency-line"
               type="line"
-              paint={{
-                "line-color": "#ef4444",
-                "line-width": 4
-              }}
+              paint={{ "line-color": "#ef4444", "line-width": 4 }}
             />
-
           </Source>
-
         )}
 
         {/* SOURCE */}
 
-        {source && (
-
-          <Marker
-            longitude={source[1]}
-            latitude={source[0]}
-          >
-
-            <div className="text-3xl">
-              📍
-            </div>
-
+        {isValidPoint(source) && (
+          <Marker longitude={source[1]} latitude={source[0]}>
+            <div className="text-3xl">📍</div>
           </Marker>
-
         )}
 
         {/* DESTINATION */}
 
-        {destination && (
-
-          <Marker
-            longitude={destination[1]}
-            latitude={destination[0]}
-          >
-
-            <div className="text-3xl">
-              🏁
-            </div>
-
+        {isValidPoint(destination) && (
+          <Marker longitude={destination[1]} latitude={destination[0]}>
+            <div className="text-3xl">🏁</div>
           </Marker>
-
         )}
 
         {/* MARKERS */}
 
-        {validEvents.map((event) => (
-          <Marker
-            key={getEventKey(event)}
-            longitude={Number(event.longitude)}
-            latitude={Number(event.latitude)}
-          >
-            <button
-              className="relative"
-              aria-label={`${event.event_cause} — severity ${event.severity_score}`}
-              onClick={() => setSelected(event)}
+        {validEvents.map((event) => {
+          const ring = getRing(event);
+          const isHighSeverity = event.severity_score >= HIGH_SEVERITY_THRESHOLD;
+          const size = isHighSeverity ? MARKER_SIZE_LARGE : MARKER_SIZE_SMALL;
+
+          return (
+            <Marker
+              key={event.id}
+              longitude={Number(event.longitude)}
+              latitude={Number(event.latitude)}
             >
-              {getRing(event) && (
-                <div className={getRing(event)} />
-              )}
+              <button
+                className="relative"
+                aria-label={`${event.event_cause} — severity ${event.severity_score}`}
+                onClick={() => setSelected(event)}
+              >
+                {ring && <div className={ring} />}
 
-              <div
-                className="rounded-full border-2 border-white shadow-xl"
-                style={{
-                  width:
-                    event.severity_score >= HIGH_SEVERITY_THRESHOLD
-                      ? MARKER_SIZE_LARGE
-                      : MARKER_SIZE_SMALL,
-
-                  height:
-                    event.severity_score >= HIGH_SEVERITY_THRESHOLD
-                      ? MARKER_SIZE_LARGE
-                      : MARKER_SIZE_SMALL,
-
-                  backgroundColor:
-                    getColor(event),
-                }}
-              />
-            </button>
-          </Marker>
-        ))}
+                <div
+                  className="rounded-full border-2 border-white shadow-xl"
+                  style={{
+                    width: size,
+                    height: size,
+                    backgroundColor: getColor(event),
+                  }}
+                />
+              </button>
+            </Marker>
+          );
+        })}
 
         {/* POPUP */}
 
@@ -577,10 +477,7 @@ const destination =
             onClose={() => setSelected(null)}
           >
             <div className="space-y-2 min-w-[200px]">
-
-              <h2 className="text-lg font-bold">
-                {selected.event_cause}
-              </h2>
+              <h2 className="text-lg font-bold">{selected.event_cause}</h2>
 
               <div className="flex justify-between">
                 <span>Cluster</span>
@@ -589,36 +486,23 @@ const destination =
 
               <div className="flex justify-between">
                 <span>Severity</span>
-
-                <span className="text-red-500 font-bold">
-                  {selected.severity_score}
-                </span>
+                <span className="text-red-500 font-bold">{selected.severity_score}</span>
               </div>
 
               <div className="flex justify-between">
                 <span>Priority</span>
-
-                <span>
-                  {selected.priority}
-                </span>
+                <span>{selected.priority}</span>
               </div>
 
               <div className="flex justify-between">
                 <span>Type</span>
-
-                <span>
-                  {selected.event_type}
-                </span>
+                <span>{selected.event_type}</span>
               </div>
 
               <div className="flex justify-between">
                 <span>Time</span>
-
-                <span>
-                  {formatTimestamp(selected.timestamp)}
-                </span>
+                <span>{formatTimestamp(selected.timestamp)}</span>
               </div>
-
             </div>
           </Popup>
         )}

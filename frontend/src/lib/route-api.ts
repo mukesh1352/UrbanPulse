@@ -1,7 +1,9 @@
+import { BASE_URL } from "./api";
+
 export async function getRoutes() {
 
   const response = await fetch(
-    "http://127.0.0.1:8000/route"
+    `${BASE_URL}/route`
   );
 
   if (!response.ok) {

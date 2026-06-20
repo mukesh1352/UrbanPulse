@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BarChart3, Brain, Activity, Map } from "lucide-react";
+import { BarChart3, Brain, Activity, Map, History } from "lucide-react";
 
 const links = [
   {
@@ -23,6 +23,11 @@ const links = [
     href: "/map",
     label: "Map Center",
     icon: Map,
+  },
+  {
+    href: "/post_event",
+    label: "Post-Event Review",
+    icon: History,
   },
 ];
 

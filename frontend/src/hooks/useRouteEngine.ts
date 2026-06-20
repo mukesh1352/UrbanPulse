@@ -2,105 +2,64 @@
 
 import { useEffect } from "react";
 import { useRouteStore } from "@/store/route-store";
+import type { RouteResult } from "@/store/route-store";
+
+const ROUTE_ENDPOINT = "http://127.0.0.1:8000/route/";
 
 export default function useRouteEngine() {
-
-  const source =
-    useRouteStore(
-      s => s.source
-    );
-
-  const destination =
-    useRouteStore(
-      s => s.destination
-    );
-
-  const setRoutes =
-    useRouteStore(
-      s => s.setRoutes
-    );
+  const source = useRouteStore((s) => s.source);
+  const destination = useRouteStore((s) => s.destination);
+  const setRoutes = useRouteStore((s) => s.setRoutes);
 
   useEffect(() => {
+    if (!source || !destination) return;
 
-    if (
-      !source ||
-      !destination
-    )
-      return;
+    // Guards against a slower, older request resolving after a newer
+    // source/destination change and clobbering fresher route data.
+    let ignore = false;
 
     async function fetchRoutes() {
-
       try {
+        const response = await fetch(ROUTE_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ start: source, goal: destination }),
+        });
 
-        const response =
-          await fetch(
-            "http://127.0.0.1:8000/route",
-            {
-              method: "POST",
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
 
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
+        const data = await response.json();
+        if (ignore) return;
 
-              body: JSON.stringify({
+        // Normalize the backend's snake_case payload into the store's
+        // shape, defaulting any missing field instead of letting
+        // `undefined` reach the map/length calls downstream.
+        const route: RouteResult = {
+          primaryRoute: data.primary_route ?? [],
+          diversionRoute: data.diversion_route ?? [],
+          emergencyRoute: data.emergency_route ?? [],
+          primaryDistance: data.primary_distance ?? 0,
+          diversionDistance: data.diversion_distance ?? 0,
+          emergencyDistance: data.emergency_distance ?? 0,
+          primaryETA: data.primary_eta ?? 0,
+          diversionETA: data.diversion_eta ?? 0,
+          emergencyETA: data.emergency_eta ?? 0,
+        };
 
-                start: source,
-
-                goal: destination
-
-              })
-
-            }
-          );
-
-        const routes =
-          await response.json();
-        console.log("Routes Response:",routes);
-
-        setRoutes(
-
-          routes.primary_route,
-
-          routes.diversion_route,
-
-          routes.emergency_route,
-
-          routes.primary_distance,
-
-          routes.diversion_distance,
-
-          routes.emergency_distance,
-
-          routes.primary_eta,
-
-          routes.diversion_eta,
-
-          routes.emergency_eta
-        );
-      console.log(
-  "AFTER SET",
-  useRouteStore.getState()
-);
-
+        setRoutes(route);
+      } catch (err) {
+        if (!ignore) {
+          console.error("ROUTE FETCH ERROR:", err);
+        }
       }
-
-      catch (err) {
-
-        console.error(err);
-
-      }
-
     }
 
     fetchRoutes();
 
-  }, [
-
-    source,
-    destination,
-    setRoutes
-
-  ]);
-
+    return () => {
+      ignore = true;
+    };
+  }, [source, destination, setRoutes]);
 }
