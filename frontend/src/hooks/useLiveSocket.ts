@@ -100,15 +100,32 @@ export default function useLiveSocket() {
         const riskScore = police * 2 + barricades + ambulances * 3;
 
         updatedDeployments.push({
-          area,
-          police,
-          barricades,
-          ambulances,
-          priority,
-          station: stationMap[area] ?? "Nearest Traffic PS",
-          riskScore,
-          congestion: riskScore >= 50 ? "Heavy" : riskScore >= 25 ? "Moderate" : "Low"
-        });
+  id: event.id ?? crypto.randomUUID(),
+
+  area,
+
+  police,
+  barricades,
+  ambulances,
+
+  priority,
+
+  station:
+    stationMap[area] ??
+    "Nearest Traffic PS",
+
+  riskScore,
+
+  congestion:
+    riskScore >= 50
+      ? "Heavy"
+      : riskScore >= 25
+      ? "Moderate"
+      : "Low",
+
+  latitude: event.latitude,
+  longitude: event.longitude
+});
       }
 
       routeStore.setDeployments(updatedDeployments);
