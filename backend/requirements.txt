@@ -11,3 +11,9 @@ langchain
 langgraph
 openai
 python-dotenv
+osmnx
+requests
+uvicorn
+joblib
+xgboost
+geopy
