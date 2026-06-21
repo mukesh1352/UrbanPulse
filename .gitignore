@@ -105,3 +105,10 @@ docker-compose.override.yml
 # =========================
 coverage/
 .cache/
+
+# Environment files
+.env
+.env.*
+frontend/.env*
+backend/.env*
+!.env.example
