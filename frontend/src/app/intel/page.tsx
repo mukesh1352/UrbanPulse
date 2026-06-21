@@ -1,17 +1,17 @@
 import ForecastChart from "@/components/charts/forecast-chart";
 import TrendChart from "@/components/charts/trend-chart";
-import HotspotTable from "@/components/tables/hotspot-table";
-import AnomalyTable from "@/components/tables/anomaly-table";
 import PredictCard from "@/components/prediction/predict-card";
-import Copilot from "@/components/copilot/copilot";
+
+const cardClass =
+  "relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-gradient-to-b from-zinc-900/40 to-zinc-950 p-6 shadow-lg shadow-black/20 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-zinc-700 hover:shadow-xl hover:shadow-black/30";
 
 export default function IntelPage() {
   return (
     <div className="space-y-8">
 
       {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-4xl font-bold tracking-tight text-white">
+      <div className="space-y-2 border-b border-zinc-800/60 pb-6">
+        <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
           Intelligence Center
         </h1>
 
@@ -21,20 +21,21 @@ export default function IntelPage() {
       </div>
 
       {/* Forecast */}
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 shadow-lg transition-all hover:border-zinc-700">
+      <div className={cardClass}>
         <ForecastChart />
       </div>
 
       {/* Trend + Hotspots */}
       <div className="grid gap-8 lg:grid-cols-2">
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 shadow-lg transition-all hover:border-zinc-700">
+        {/* spans full width until a second panel joins it */}
+        <div className={`${cardClass} lg:col-span-2`}>
           <div className="mb-5">
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold tracking-tight text-white">
               Trend Analysis
             </h2>
 
-            <p className="mt-1 text-sm text-zinc-400">
+            <p className="mt-1 text-sm leading-relaxed text-zinc-400">
               Historical event patterns and variations.
             </p>
           </div>
@@ -42,68 +43,26 @@ export default function IntelPage() {
           <TrendChart />
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 shadow-lg transition-all hover:border-zinc-700">
-          <div className="mb-5">
-            <h2 className="text-lg font-semibold text-white">
-              Hotspot Zones
-            </h2>
-
-            <p className="mt-1 text-sm text-zinc-400">
-              Most active locations requiring attention.
-            </p>
-          </div>
-
-          <HotspotTable />
-        </div>
-
       </div>
 
-      {/* Anomaly Detection */}
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 shadow-lg transition-all hover:border-zinc-700">
-
-        <div className="mb-5">
-          <h2 className="text-lg font-semibold text-white">
-            Anomaly Detection
-          </h2>
-
-          <p className="mt-1 text-sm text-zinc-400">
-            Identify unusual traffic and incident patterns.
-          </p>
-        </div>
-
-        <AnomalyTable />
-
-      </div>
-
-      {/* Prediction + Copilot */}
+      {/* Prediction */}
       <div className="grid gap-8 lg:grid-cols-2">
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 shadow-lg transition-all hover:border-zinc-700">
+        {/* spans full width until Copilot rejoins it */}
+        <div className={`${cardClass} lg:col-span-2`}>
 
           <div className="mb-5">
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold tracking-tight text-white">
               Prediction Engine
             </h2>
 
-            <p className="mt-1 text-sm text-zinc-400">
+            <p className="mt-1 text-sm leading-relaxed text-zinc-400">
               Forecast future incidents using ML models.
             </p>
           </div>
 
           <PredictCard />
 
-        </div>
-
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 shadow-lg transition-all hover:border-zinc-700">
-          <div className="mb-5">
-            <h2 className="text-lg font-semibold text-white">AI Copilot</h2>
-
-            <p className="mt-1 text-sm text-zinc-400">
-              Ask questions and get guided insights.
-            </p>
-          </div>
-
-          <Copilot />
         </div>
 
       </div>
