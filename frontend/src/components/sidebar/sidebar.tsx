@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Home, BarChart3, Brain, Activity, Map, History } from "lucide-react";
 
@@ -43,11 +44,26 @@ export default function Sidebar() {
   return (
     <aside className="w-64 min-h-screen border-r border-zinc-800/60 bg-zinc-950 flex flex-col">
       <div className="px-6 py-6 border-b border-zinc-800/60">
-        <span className="text-xl font-bold bg-linear-to-r from-white to-zinc-400 bg-clip-text text-transparent">
-          EventFlow AI
-        </span>
-      </div>
+  <div className="flex items-center gap-3">
+    <Image
+      src="/favicon.ico"
+      alt="Urban Pulse"
+      width={40}
+      height={40}
+      className="rounded-lg"
+    />
 
+    <div className="flex flex-col">
+      <span className="text-xl font-bold bg-linear-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+        EventFlow AI
+      </span>
+
+      <span className="text-[11px] tracking-wider uppercase text-zinc-500">
+        Powered by Urban Pulse
+      </span>
+    </div>
+  </div>
+</div>
       <nav className="flex flex-col gap-1 p-3">
         {links.map((item) => {
           const Icon = item.icon;

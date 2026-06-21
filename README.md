@@ -1,4 +1,4 @@
-# UrbanPulse 🚦
+# UrbanPulse 
 
 ## AI-Powered Event-Driven Traffic Intelligence Platform
 
