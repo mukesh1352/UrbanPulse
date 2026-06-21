@@ -1,0 +1,26 @@
+[project]
+name = "urbanpulse-backend"
+version = "0.1.0"
+description = "Event Driven Congestion Prediction System"
+requires-python = ">=3.12"
+
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pandas",
+    "numpy",
+    "scikit-learn",
+    "catboost",
+    "joblib",
+    "networkx",
+    "osmnx",
+    "geopy",
+    "requests",
+    "websockets",
+    "python-dotenv"
+]
+
+[tool.uv]
+dev-dependencies = [
+    "ipykernel"
+]

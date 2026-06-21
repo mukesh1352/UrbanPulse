@@ -1,0 +1,12 @@
+services:
+  backend:
+    build: .
+    container_name: urbanpulse-backend
+
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - .env
+
+    restart: always
