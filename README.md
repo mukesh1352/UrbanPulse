@@ -1,357 +1,538 @@
-# EventFlow AI 🚦
+# UrbanPulse 🚦
 
-## AI-Powered Event Impact Forecasting, Traffic Response Optimization & Intelligent Control Center
+## AI-Powered Event-Driven Traffic Intelligence Platform
 
-EventFlow AI is an intelligent decision-support platform designed to help traffic authorities proactively manage congestion caused by planned and unplanned events such as political rallies, festivals, sports events, VIP movements, processions, construction activities, accidents, and road incidents.
+UrbanPulse is an intelligent traffic management platform designed to proactively manage congestion caused by **planned and unplanned events** such as political rallies, festivals, sports events, construction activities, accidents, and sudden gatherings.
 
-By combining Machine Learning, Reinforcement Learning, Graph-Based Route Optimization, Heatmap Analytics, and Agentic AI, EventFlow AI forecasts event-related traffic impact and recommends optimal manpower deployment, barricading strategies, and diversion plans before congestion becomes critical.
+By combining historical traffic data, real-time event streams, geospatial analytics, graph-based route optimization, hotspot clustering, and intelligent resource allocation, UrbanPulse enables authorities to transition from reactive traffic management to proactive decision-making.
 
----
-
-# Problem Statement
-
-Large-scale events frequently create localized traffic breakdowns and operational challenges in urban environments.
-
-Current traffic management systems are largely reactive:
-
-* Event impact is rarely quantified beforehand.
-* Officer deployment depends heavily on experience.
-* Barricade placement is manually planned.
-* Diversion routes are often decided after congestion occurs.
-* Historical incidents are not effectively used for future planning.
-
-EventFlow AI transforms traffic management from reactive operations into proactive, data-driven decision making.
+> **Predict → Visualize → Optimize → Respond → Learn**
 
 ---
 
-# Solution Overview
+# 📑 Table of Contents
 
-EventFlow AI acts as an AI-powered Traffic Control Copilot.
-
-Given an upcoming event, the platform:
-
-1. Forecasts expected traffic impact.
-2. Identifies affected junctions and zones.
-3. Generates congestion heatmaps.
-4. Creates alternate diversion routes.
-5. Optimizes officer and barricade deployment.
-6. Generates an AI-powered traffic action plan.
-7. Learns from completed events to improve future recommendations.
+* [Problem Statement](#-problem-statement)
+* [Why UrbanPulse](#-why-urbanpulse)
+* [Solution Overview](#-solution-overview)
+* [Key Features](#-key-features)
+* [How UrbanPulse Works](#-how-urbanpulse-works)
+* [End-to-End Workflow](#-end-to-end-workflow)
+* [Key Innovations](#-key-innovations)
+* [System Architecture](#-system-architecture)
+* [Dataset](#-dataset)
+* [Technology Stack](#-technology-stack)
+* [Why These Technologies?](#-why-these-technologies)
+* [Quick Start](#-quick-start)
+* [Installation](#-installation)
+* [Environment Variables](#-environment-variables)
+* [Docker Deployment](#-docker-deployment)
+* [Project Structure](#-project-structure)
+* [Future Scope](#-future-scope)
+* [Contributing](#-contributing)
+* [License](#-license)
 
 ---
 
-# Key Features
+# 🎯 Problem Statement
 
-## Event Impact Forecasting
+## Event-Driven Congestion (Planned & Unplanned)
 
-Forecasts the expected impact of planned and unplanned events using historical incident data.
+### Operational Challenges
+
+Political rallies, festivals, sports events, construction activities, accidents, and sudden gatherings frequently create localized traffic breakdowns.
+
+### Why It Is Difficult Today
+
+* Event impact is not quantified beforehand.
+* Resource deployment is largely experience-driven.
+* Diversion planning is reactive.
+* Traffic hotspots evolve dynamically.
+* No post-event learning mechanism exists.
+
+### Objective
+
+> How can historical and real-time data be used to forecast event-related traffic impact and recommend optimal manpower deployment, barricading strategies, and diversion plans?
+
+---
+
+# 💡 Why UrbanPulse
+
+Traditional traffic management systems are reactive. Congestion is addressed only after it forms, and operational decisions depend heavily on manual experience.
+
+While studying event-driven congestion, we identified several gaps.
+
+## 1. Events Have Predictable Patterns
+
+Planned events such as festivals, rallies, concerts, and sports matches repeatedly affect the same areas.
+
+Similarly, accidents and lane closures create localized disruptions that spread rapidly.
+
+Therefore, UrbanPulse incorporates an **Event Impact Prediction Engine** capable of forecasting congestion before it becomes critical.
+
+---
+
+## 2. Traffic Conditions Change Continuously
+
+Static dashboards provide snapshots rather than live situational awareness.
+
+UrbanPulse uses **WebSockets** to continuously stream incidents and update the control center in real time.
+
+---
+
+## 3. Congestion Is Spatial
+
+Traffic problems are not isolated points.
+
+UrbanPulse uses:
+
+* DBSCAN clustering
+* Heatmaps
+* Risk scoring
+
+to identify critical congestion zones and prioritize response efforts.
+
+---
+
+## 4. Diversions Should Be Computed, Not Guessed
+
+UrbanPulse models Bengaluru's road network as a graph and uses A* search to generate:
+
+* Primary Routes
+* Diversion Routes
+* Emergency Corridors
+
+---
+
+## 5. Resource Allocation Should Be Data-Driven
+
+UrbanPulse recommends:
+
+* Police deployment
+* Barricade allocation
+* Ambulance requirements
+
+and dynamically assigns the nearest traffic police station to minimize response time.
+
+---
+
+## 6. Situational Awareness Is Critical
+
+UrbanPulse integrates:
+
+* Live Events
+* Heatmaps
+* Hotspot Clusters
+* Resource Deployment
+* Route Recommendations
+* Police Station Assignments
+
+into a unified command center.
+
+---
+
+## 7. Learning From Events Matters
+
+UrbanPulse stores post-event insights to improve future recommendations and create a continuously learning system.
+
+---
+
+# 🚀 Solution Overview
+
+UrbanPulse provides an AI-assisted traffic command platform capable of:
+
+1. Detecting traffic incidents in real time.
+2. Forecasting congestion severity.
+3. Generating hotspot clusters.
+4. Visualizing congestion through heatmaps.
+5. Generating alternate routes using graph algorithms.
+6. Recommending manpower and barricading requirements.
+7. Dynamically assigning nearby traffic police stations.
+8. Providing a live command center dashboard.
+9. Storing post-event insights for future improvements.
+
+---
+
+# ⭐ Key Features
+
+## Real-Time Event Monitoring
+
+### Planned Events
+
+* Festivals
+* Concerts
+* Cricket Matches
+* Political Rallies
+* VIP Movements
+
+### Unplanned Events
+
+* Accidents
+* Traffic Jams
+* Lane Closures
+* Construction Activities
+* Road Blockages
+
+---
+
+## Traffic Impact Forecasting
+
+Predicts:
+
+* Impact Score
+* Risk Level
+* Congestion Severity
+* Recommended Response
+
+---
+
+## Heatmap Analytics
+
+Visualizes:
+
+* High-Risk Zones
+* Historical Hotspots
+* Cluster Density
+* Congestion Regions
+
+---
+
+## DBSCAN Hotspot Clustering
+
+Provides:
+
+* Cluster IDs
+* Severity Levels
+* Risk Scores
+* Congestion Zones
+
+---
+
+## Route Optimization Engine
+
+Using NetworkX and A* Search:
+
+* Primary Route
+* Diversion Route
+* Emergency Corridor
+
+Outputs:
+
+* Distance
+* ETA
+* Route Geometry
+
+---
+
+## Resource Allocation
+
+Recommends:
+
+* Police Units
+* Barricades
+* Ambulances
+
+---
+
+## Dynamic Police Station Assignment
+
+Provides:
+
+* Station Name
+* Distance from Incident
+* Estimated Response Time
+* Unit Allocation
+
+---
+
+## Command Response Center
+
+Displays:
+
+* Active Incidents
+* Heatmaps
+* Risk Scores
+* Resource Usage
+* Diversion Plans
+* Recommended Actions
+
+---
+
+# ⚙️ How UrbanPulse Works
+
+UrbanPulse combines historical data, live event streams, geospatial analytics, graph algorithms, and intelligent resource allocation.
+
+---
+
+## Hotspot Detection
+
+Live events contain:
+
+* Latitude
+* Longitude
+* Event Type
+* Event Cause
+* Severity Score
+* Timestamp
+
+These are visualized through weighted heatmaps.
+
+---
+
+## Cluster Formation
+
+UrbanPulse uses **DBSCAN** to group nearby incidents.
 
 ### Inputs
 
-* Event Type
-* Event Cause
-* Location
-* Zone
-* Junction
-* Priority
-* Event Time
-* Attendance Estimate
-* Road Closure Requirement
+* Latitude
+* Longitude
+
+### Parameters
+
+* ε (distance radius)
+* Minimum number of points
 
 ### Outputs
 
-* Impact Score (0–100)
-* Risk Category
-* Affected Junctions
-* Predicted Congestion Radius
+```
+Cluster 18
+Cluster 37
+Cluster 42
+```
+
+Each cluster represents a congestion zone.
 
 ---
 
-## Traffic Impact Heatmaps
+## Risk Score Calculation
 
-Generates interactive heatmaps showing:
+```
+Risk Score =
+(Police × 2)
++
+(Barricades × 1)
++
+(Ambulances × 3)
+```
 
-* Historical event hotspots
-* Predicted congestion zones
-* High-risk junction clusters
-* Event influence radius
+### Congestion Categories
 
-Heatmaps provide traffic authorities with visual evidence of expected disruptions.
-
----
-
-## Graph-Based Route Diversion Engine
-
-Road infrastructure is modeled as a graph.
-
-### Representation
-
-* Junctions → Nodes
-* Roads → Edges
-
-Using the A* algorithm, the system generates alternate routes when incidents or events affect normal traffic flow.
-
-### Output
-
-* Recommended Diversion Routes
-* Blocked Road Identification
-* Alternate Path Visualization
+| Score | Congestion |
+| ----- | ---------- |
+| 0-24  | Low        |
+| 25-49 | Moderate   |
+| ≥50   | Heavy      |
 
 ---
 
-## Reinforcement Learning Resource Optimizer
+## Police and Barricade Allocation
 
-A PPO-based Reinforcement Learning agent recommends optimal traffic response strategies.
+### Accident
 
-### State
+```
+Police : 8
+Barricades : 6
+Ambulances : 2
+```
 
-* Event Type
-* Zone
-* Impact Score
-* Road Closure Status
-* Historical Event Context
+### Traffic Jam
 
-### Actions
+```
+Police : 4
+Barricades : 3
+```
 
-* Officer Deployment
-* Barricade Allocation
-* Diversion Strategy Selection
+### Lane Closure
 
-### Reward
+```
+Police : 2
+Barricades : 5
+```
 
-Maximize:
+### Festival / Concert / Cricket Match
 
-* Traffic Flow Efficiency
-* Incident Resolution Effectiveness
+```
+Police : 15
+Barricades : 20
+Ambulances : 3
+```
 
-Minimize:
-
-* Resource Usage
-* Congestion Severity
-* Operational Cost
-
-### Output
-
-* Recommended Officer Count
-* Barricade Locations
-* Resource Allocation Plan
+Resources accumulate across cluster events.
 
 ---
 
-## Agentic Traffic Copilot
+## Priority Assignment
 
-An AI-powered traffic commander that combines outputs from all system modules.
-
-### Capabilities
-
-* Event Analysis
-* Impact Assessment
-* Route Diversion Analysis
-* Resource Planning
-* Action Plan Generation
-
-### Example
-
-> A cricket match at Chinnaswamy Stadium is expected to generate high traffic impact between 6 PM and 10 PM. Queens Circle, Cubbon Road, and MG Road are likely to experience congestion. Deploy 18 officers, install 12 barricades, and activate Diversion Route D3. Estimated congestion reduction: 35%.
+| Severity Score | Priority |
+| -------------- | -------- |
+| ≥5             | Critical |
+| 4              | High     |
+| 3              | Moderate |
+| ≤2             | Stable   |
 
 ---
 
-## Post-Event Learning Engine
+## Route Generation
 
-One of the major challenges in traffic management is the lack of continuous learning.
+Road network:
 
-EventFlow AI stores:
+* Nodes → Junctions
+* Edges → Roads
 
-* Predicted Impact
-* Actual Outcome
-* Officer Deployment
-* Barricade Usage
-* Selected Diversion Plan
+Using A* Search:
 
-These records are used to improve future forecasting and optimization strategies.
+* Primary Route
+* Diversion Route
+* Emergency Corridor
 
-This creates a self-improving traffic management system.
+Outputs:
+
+* Distance
+* ETA
+* Route Geometry
 
 ---
 
-# System Architecture
+## Nearest Police Station Assignment
+
+UrbanPulse computes geodesic distances between incidents and nearby stations.
+
+Outputs:
+
+* Station Name
+* Distance
+* ETA
+* Units to Deploy
+
+---
+
+## Heatmap Weights
+
+| Event         | Weight |
+| ------------- | ------ |
+| Accident      | 5      |
+| Traffic Jam   | 4      |
+| Lane Closure  | 3      |
+| Festival      | 2      |
+| Concert       | 2      |
+| Cricket Match | 2      |
+| Others        | 1      |
+
+---
+
+# 🔄 End-to-End Workflow
 
 ```text
-Historical Event Dataset
-          ↓
-Event Impact Forecasting Model
-(CatBoost/XGBoost)
-          ↓
-Traffic Impact Score
-          ↓
-Heatmap Generation Engine
-          ↓
-Road Network Graph
-(NetworkX)
-          ↓
-A* Diversion Engine
-          ↓
-RL Resource Optimizer
-(PPO)
-          ↓
-Agentic Traffic Copilot
-          ↓
-Control Room Dashboard
-          ↓
-Post-Event Learning Engine
-          ↓
-Historical Event Dataset
+Historical Dataset
+        ↓
+Live Event Stream
+(WebSocket)
+        ↓
+DBSCAN Hotspot Clustering
+        ↓
+Heatmap Generation
+        ↓
+Risk Score Computation
+        ↓
+Resource Recommendation
+        ↓
+Nearest Police Station Assignment
+        ↓
+A* Route Optimization
+        ↓
+Command Response Dashboard
+        ↓
+Post Event Analytics
 ```
 
 ---
 
-# Dataset
+# ⭐ Key Innovations
 
-The system is trained using a Bengaluru traffic incident dataset containing:
+Unlike conventional traffic systems that react after congestion occurs, UrbanPulse:
 
-* 8,173 Historical Events
-* 294 Junctions
-* 54 Police Stations
-* Planned and Unplanned Incidents
+* Predicts event-driven traffic impact.
+* Streams incidents in real time.
+* Uses DBSCAN clustering for hotspot detection.
+* Generates weighted heatmaps.
+* Computes A* diversion routes.
+* Dynamically assigns police stations.
+* Calculates resource requirements.
+* Supports post-event learning.
+
+---
+
+# 🏗 System Architecture
+
+```text
+Historical Dataset
+        ↓
+Event Simulator
+        ↓
+Live Event Stream
+(WebSocket)
+        ↓
+DBSCAN Clustering
+        ↓
+Heatmap Engine
+        ↓
+Risk Score Engine
+        ↓
+Route Optimization
+(A*)
+        ↓
+Nearest Police Station Assignment
+        ↓
+Command Dashboard
+        ↓
+Post Event Analytics
+```
+
+---
+
+# 📊 Dataset
+
+UrbanPulse uses Bengaluru traffic datasets containing:
+
+* Historical Events
+* Cluster Information
+* Planned Events
+* Unplanned Incidents
 
 ### Event Categories
 
-* Vehicle Breakdown
 * Accident
-* Water Logging
+* Traffic Jam
+* Lane Closure
 * Construction
-* Public Event
-* Procession
-* Protest
-* VIP Movement
-* Tree Fall
-* Road Conditions
-* Others
+* Festival
+* Concert
+* Cricket Match
+* Public Gathering
 
 ---
 
-# Dashboard Modules
-
-## Event Simulator
-
-Input:
-
-* Event Type
-* Location
-* Attendance
-* Event Duration
-* Start Time
-
----
-
-## Traffic Impact Heatmap
-
-Displays:
-
-* High Risk Zones
-* Medium Risk Zones
-* Low Risk Zones
-
-Color Scheme:
-
-* 🔴 High Impact
-* 🟠 Moderate Impact
-* 🟢 Low Impact
-
----
-
-## Diversion Planner
-
-Displays:
-
-* Blocked Roads
-* Suggested Alternate Routes
-* A* Route Recommendations
-
----
-
-## Resource Allocation Center
-
-Displays:
-
-* Officer Deployment
-* Barricade Allocation
-* RL Recommendations
-* Expected Resource Efficiency
-
----
-
-## AI Command Center
-
-Displays:
-
-* Event Summary
-* Impact Forecast
-* Affected Junctions
-* Recommended Actions
-* Expected Improvement
-
----
-
-# Example Workflow
-
-## Input
-
-```text
-Event Type: Cricket Match
-
-Location: Chinnaswamy Stadium
-
-Attendance: 40,000
-
-Start Time: 6:00 PM
-```
-
-## Output
-
-```text
-Impact Score: 88
-
-Risk Level: High
-
-Affected Junctions:
-- Queens Circle
-- Cubbon Road
-- MG Road
-
-Recommended Officers:
-- 18
-
-Recommended Barricades:
-- 12
-
-Diversion Plan:
-- Route D3
-
-Expected Congestion Reduction:
-- 35%
-```
-
----
-
-# Technology Stack
+# 🛠 Technology Stack
 
 ## Frontend
 
-* Next.js
-* React
+* Next.js 16
+* React 19
+* TypeScript
 * Tailwind CSS
-* Leaflet
-* Mapbox
+* MapLibre GL
+* Zustand
 
 ## Backend
 
 * FastAPI
+* Uvicorn
+* WebSockets
 
 ## Machine Learning
 
 * CatBoost
-* XGBoost
 * Scikit-Learn
 
 ## Graph Processing
@@ -359,38 +540,219 @@ Expected Congestion Reduction:
 * NetworkX
 * A* Search
 
-## Reinforcement Learning
+## Geospatial Analytics
 
-* Stable-Baselines3
-* PPO
+* DBSCAN
+* Geopy
 
-## Agentic AI
+## Deployment
 
-* LangGraph
-* OpenAI API / Local LLM
-
-## Database
-
-* PostgreSQL
-* Redis
+* Docker
+* Docker Compose
 
 ---
 
-# Future Scope
+# ❓ Why These Technologies?
 
-* Live GPS Vehicle Tracking
-* CCTV-Based Traffic Monitoring
-* Crowd Density Estimation
+### CatBoost
+
+Efficient for tabular traffic datasets.
+
+### DBSCAN
+
+Naturally detects congestion clusters without requiring predefined cluster counts.
+
+### WebSockets
+
+Enables real-time updates instead of polling.
+
+### NetworkX + A*
+
+Provides dynamic route planning.
+
+### MapLibre
+
+Open-source interactive maps without vendor lock-in.
+
+### Docker
+
+Ensures reproducible deployments.
+
+---
+
+# ⚡ Quick Start
+
+Run the entire platform:
+
+```bash
+docker compose up --build
+```
+
+| Service      | URL                           |
+| ------------ | ----------------------------- |
+| Frontend     | http://localhost:3000         |
+| Backend      | http://localhost:8000         |
+| Swagger Docs | http://localhost:8000/docs    |
+| WebSocket    | ws://localhost:8000/ws/events |
+
+---
+
+# 📦 Installation
+
+## Clone Repository
+
+```bash
+git clone https://github.com/mukesh1352/UrbanPulse.git
+
+cd UrbanPulse
+```
+
+## Backend
+
+```bash
+cd backend
+
+uv sync
+
+uv run uvicorn app.main:app --reload
+```
+
+Backend:
+
+```
+http://localhost:8000
+```
+
+Swagger:
+
+```
+http://localhost:8000/docs
+```
+
+---
+
+## Frontend
+
+```bash
+cd frontend
+
+pnpm install
+
+pnpm dev
+```
+
+Frontend:
+
+```
+http://localhost:3000
+```
+
+---
+
+# 🔑 Environment Variables
+
+## Backend (.env)
+
+```env
+TOMTOM_API_KEY=YOUR_API_KEY
+```
+
+Used to dynamically fetch nearby traffic police stations.
+
+---
+
+## Frontend (.env.local)
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+
+NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws/events
+```
+
+---
+
+# 🐳 Docker Deployment
+
+## Backend
+
+```bash
+cd backend
+
+docker build -t urbanpulse-backend .
+```
+
+```bash
+docker run -p 8000:8000 urbanpulse-backend
+```
+
+---
+
+## Frontend
+
+```bash
+cd frontend
+
+docker build -t urbanpulse-frontend .
+```
+
+```bash
+docker run -p 3000:3000 urbanpulse-frontend
+```
+
+---
+
+## Full Stack
+
+```bash
+docker compose up --build
+```
+
+---
+
+# 📁 Project Structure
+
+```text
+UrbanPulse/
+│
+├── frontend/
+├── backend/
+│     ├── app/
+│     ├── models/
+│     ├── data/
+│     ├── cache/
+│     ├── pyproject.toml
+│     └── uv.lock
+│
+├── docker-compose.yml
+├── README.md
+└── .gitignore
+```
+
+---
+
+# 🔮 Future Scope
+
 * Smart Signal Optimization
-* Graph Neural Networks (GNNs)
+* GPS Vehicle Tracking
+* CCTV Analytics
+* Graph Neural Networks
 * Digital Twin Traffic Simulation
 * Multi-Agent Reinforcement Learning
-* Edge AI Deployment
+* Crowd Density Estimation
 
 ---
 
-# Key Innovation
+# 🤝 Contributing
 
-Unlike traditional traffic monitoring systems that only react to incidents, EventFlow AI forecasts event-related traffic impact, visualizes congestion risks through heatmaps, generates alternate routes using graph algorithms, optimizes resource allocation using Reinforcement Learning, and provides actionable recommendations through an AI-powered Traffic Copilot.
+Contributions are welcome.
 
-By incorporating a post-event learning loop, the platform continuously improves its decision-making capabilities, enabling smarter and more adaptive urban traffic management.
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit changes.
+4. Open a Pull Request.
+
+---
+
+# 📜 License
+
+This project is licensed under the MIT License.

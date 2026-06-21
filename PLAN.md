@@ -1,4 +1,4 @@
-# 🚦 EventFlow AI
+# EventFlow AI
 
 ## AI-Powered Event Impact Forecasting, Route Diversion & Traffic Response Optimization
 
@@ -8,7 +8,7 @@ The platform combines Machine Learning, Reinforcement Learning, Graph Algorithms
 
 ---
 
-# 🎯 Problem Statement
+# Problem Statement
 
 ### Event-Driven Congestion (Planned & Unplanned)
 
@@ -34,7 +34,7 @@ Use historical and real-time event information to:
 
 ---
 
-# 💡 Solution Overview
+# Solution Overview
 
 EventFlow AI acts as an AI-powered Traffic Control Copilot.
 
@@ -77,7 +77,7 @@ Given an event, the system:
 
 ---
 
-# 🏗️ Core Architecture
+# Core Architecture
 
 ```text
                     Historical Event Dataset
@@ -148,7 +148,7 @@ Given an event, the system:
 
 ---
 
-# 🖥️ High-Level System Architecture
+# High-Level System Architecture
 
 ```text
 Frontend (Next.js + Tailwind)
@@ -188,7 +188,7 @@ Traffic Action Plan
 
 ---
 
-# 🔄 Data Flow
+# Data Flow
 
 ## Step 1 — Event Input
 
@@ -423,7 +423,7 @@ Actual event outcomes act as reward signals that improve future resource allocat
 
 ---
 
-# 📊 Dataset Overview
+# Dataset Overview
 
 Dataset Statistics:
 
@@ -448,7 +448,7 @@ Dataset Statistics:
 
 ---
 
-# 🧰 Technology Stack
+# Technology Stack
 
 ### Frontend
 
@@ -491,7 +491,7 @@ Dataset Statistics:
 
 ---
 
-# 🌟 Key Innovation
+# Key Innovation
 
 Unlike traditional traffic monitoring systems that react after congestion has already formed, EventFlow AI combines historical event intelligence, real-time traffic conditions, anomaly detection, graph-based routing, reinforcement learning, and agentic AI to forecast, optimize, and continuously improve traffic management decisions.
 
