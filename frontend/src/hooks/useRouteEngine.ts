@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import { useRouteStore } from "@/store/route-store";
 import type { RouteResult } from "@/store/route-store";
 
-const ROUTE_ENDPOINT = "http://127.0.0.1:8000/route/";
+const ROUTE_ENDPOINT =
+  `${process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000"}/route/`;
 
 export default function useRouteEngine() {
   const source = useRouteStore((s) => s.source);

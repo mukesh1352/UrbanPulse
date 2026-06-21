@@ -6,6 +6,8 @@ import { useRouteStore, Deployment } from "@/store/route-store";
 
 export default function useLiveSocket() {
   const wsRef = useRef<WebSocket | null>(null);
+  const WS_URL =
+  `${process.env.NEXT_PUBLIC_API_URL?.replace(/^http/, "ws") ?? "ws://127.0.0.1:8000"}/ws/events`;
 
   const addEvent = useLiveStore(s => s.addEvent);
   const setConnected = useLiveStore(s => s.setConnected);
@@ -16,7 +18,7 @@ export default function useLiveSocket() {
     let simulationInterval: NodeJS.Timeout | null = null;
     let isConnectedToWs = false;
 
-    const ws = new WebSocket("ws://127.0.0.1:8000/ws/events");
+    const ws = new WebSocket(WS_URL);
     wsRef.current = ws;
 
     const processEvent = (event: any) => {

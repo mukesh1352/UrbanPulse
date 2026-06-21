@@ -3,7 +3,7 @@ export async function fetchRoutes(
   destination: [number, number]
 ) {
   const res = await fetch(
-    "http://127.0.0.1:8000/routes",
+    `${process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000"}/routes`,
     {
       method: "POST",
       headers: {
